@@ -1,0 +1,26 @@
+addpath lib;
+
+clear all;close all;clc;
+
+%% compute gPb at each image
+imgDir = '../BSDS500/data/images/test';
+outGPbImgDir = '../BSDS500/ucm2/test/gPb/img';
+outGPbDataDir = '../BSDS500/ucm2/test/gPb/data';
+mkdir(outGPbImgDir);
+mkdir(outGPbDataDir);
+filepath_imgDir= dir(fullfile(imgDir,'*.jpg'));
+
+tic;
+for i =1:numel(filepath_imgDir),
+    outGPbImgDir = fullfile(outGPbImgDir,[filepath_imgDir(i).name(1:end-4) '_gPb' '.bmp']);
+    if exist(outGPbImgFile,'file'), continue; end
+    outGPbDataFile = fullfile(outGPbDataDir,[filepath_imgDir(i).name(1:end-4) '_gPb' '.mat']);
+    if exist(outGPbDataFile,'file'), continue; end
+    imgFile=fullfile(imgDir,filepath_imgDir(i).name);
+    % im2ucm(imgFile, outFile);
+    gPb_orient = globalPb(imgFile, outGPbDataFile);
+    gPb_final = max(gPb_orient,[],3);
+    save(outGPbDataFile);
+    imwrite(gPb_final,outGPbDataFile);
+end
+toc;
